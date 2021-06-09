@@ -1,0 +1,429 @@
+[
+    {
+        "id": 1,
+        "name": "Organic",
+        "builds": [{
+            "furnace": ["Carbon"],
+            "chemistry": ["Rubber"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 2,
+        "name": "Compound",
+        "builds": [{
+            "backpack": ["Small Generator", "Tethers", "Small Printer"],
+            "small": ["Rover Seat", "Medium Printer"],
+            "medium": ["Research Chamber", "Smelting Furnace", "Soil Centrifuge", "Trade Platform", "Large Printer", "Buggy", "Large Ror Seat"],
+            "chemistry": ["Plastic"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 3,
+        "name": "Resin",
+        "builds": [{
+            "backpack": ["Canister", "Oxygen Filters"],
+            "small": ["Medium Storage", "Medium Platform A", "Medium Platform B"],
+            "medium": ["Large Platform A", "Large Platform B", "Smelting Furnace"],
+            "large": ["Extra Large Platform B"],
+            "chemistry": ["Rubber", "Silicone"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 4,
+        "name": "Resin",
+        "builds": [{
+            "backpack": ["Canister", "Oxygen Filters"],
+            "small": ["Medium Storage", "Medium Platform A", "Medium Platform B"],
+            "medium": ["Large Platform A", "Large Platform B", "Smelting Furnace"],
+            "large": ["Extra Large Platform B"],
+            "chemistry": ["Rubber", "Silicone"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 5,
+        "name": "Clay",
+        "builds": [{
+            "furnace": ["Ceramic"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 6,
+        "name": "Quartz",
+        "builds": [{
+            "backpack": ["Beacon"],
+            "furnace": ["Glass"],
+            "chemistry": ["Silicone"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 7,
+        "name": "Ammonium",
+        "builds": [{
+            "small": ["Solid-Fuel Thruster"],
+            "chemistry": ["Hydrazine"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 8,
+        "name": "Graphite",
+        "builds": [{
+            "backpack": ["Packager"],
+            "small": ["Splitter"],
+            "chemistry": ["Graphene"]
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 9,
+        "name": "Astronium",
+        "builds": [{
+        }],
+        "found": ["All Planets"]
+    },
+    {
+        "id": 10,
+        "name": "Sphalerite",
+        "builds": [{
+            "furnace": ["Zinc"]
+        }],
+        "found": ["Sylva", "Desolo"]
+    },
+    {
+        "id": 11,
+        "name": "Wolframite",
+        "builds": [{
+            "furnace": ["Tungsten"]
+        }],
+        "found": ["Desolo", "Calidor"]
+    },
+    {
+        "id": 12,
+        "name": "Malachite",
+        "builds": [{
+            "furnace": ["Copper"]
+        }],
+        "found": ["Sylva", "Calidor"]
+    },
+    {
+        "id": 13,
+        "name": "Lithium",
+        "builds": [{
+            "backpack": ["Small Battery"],
+            "small": ["Medium Battery", "RTG"]
+        }],
+        "found": ["Vesania", "Novus"]
+    },
+    {
+        "id": 14,
+        "name": "Hematite",
+        "builds": [{
+            "furnace": ["Iron"]
+        }],
+        "found": ["Novus", "Glacio"]
+    },
+    {
+        "id": 15,
+        "name": "Titanite",
+        "builds": [{
+            "furnace": ["Titanium"]
+        }],
+        "found": ["Vesania", "Glacio"]
+    },
+    {
+        "id": 16,
+        "name": "Carbon",
+        "source": [{
+            "furnace": ["Organic"]
+        }],
+        "builds": [{
+            "chemistry": ["Plastic", "Steel", "Tungsten Carbide", "Explosive Powder"]
+        }]
+    },
+    {
+        "id": 17,
+        "name": "Ceramic",
+        "source": [{
+            "furnace": ["Clay"]
+        }],
+        "builds": [{
+            "backpack": ["Drill Mod 1"],
+            "small": ["Medium Wind Turbine", "Drill Strength 1", "Oxygenator"],
+            "medium": ["Medium Rover", "Large Storage", "Landing Pad", "Chemistry Lab"],
+            "large": ["Medium Shuttle", "Large Shuttle"]
+        }]
+    },
+    {
+        "id": 18,
+        "name": "Glass",
+        "source": [{
+            "furnace": ["Quartz"]
+        }],
+        "builds": [{
+            "backpack": ["Small Oxygen Tank", "Small Wind Turbine"],
+            "small": ["Medium Solar Panel", "Medium Wind Turbine"],
+            "medium": ["Atmospheric Condenser", "Chemistry Lab"]
+        }]
+    },
+    {
+        "id": 19,
+        "name": "Aluminum",
+        "source": [{
+            "furnace": ["Laterite"]
+        }],
+        "builds": [{
+            "small": ["Oxygenator", "Medium Generator", "Tractor", "Trailer", "Solid-Fuel Thruster"],
+            "medium": ["Buggy", "Landing Pad", "Soil Centrifuge"],
+            "large": ["Small Shuttle"],
+            "chemistry": ["Aluminum Alloy"]
+        }]
+    },
+    {
+        "id": 20,
+        "name": "Zinc",
+        "source": [{
+            "furnace": ["Sphalerite"]
+        }],
+        "builds": [{
+            "backpack": ["Power Cells", "Wide Mod", "Alignment Mod", "Inhibitor Mod", "Boost Mod", "Narrow Mod", "Terrain Analyzer"],
+            "small": ["Medium Battery"]
+        }]
+    },
+    {
+        "id": 21,
+        "name": "Copper",
+        "source": [{
+            "furnace": ["Malachite"]
+        }],
+        "builds": [{
+            "backpack": ["Worklight", "Small Solar Panel", "Extenders"],
+            "small": ["Medium Solar Panel", "Splitter"],
+            "large": ["Solar Array"],
+            "chemistry": ["Aluminum Alloy"]
+        }]
+    },
+    {
+        "id": 22,
+        "name": "Tungsten",
+        "source": [{
+            "furnace": ["Wolframite"]
+        }],
+        "builds": [{
+            "small": ["Hydrazine Thruster", "Medium Generator", "Winch"],
+            "medium": ["Chemistry Lab", "Trade Platform"],
+            "chemistry": ["Tungsten Carbide"]
+        }]
+    },
+    {
+        "id": 23,
+        "name": "Iron",
+        "source": [{
+            "furnace": ["Hematite"]
+        }],
+        "builds": [{
+            "small": ["Medium Shredder"],
+            "medium": ["Atmospheric Condenser", "Large Shredder", "Large Platform C", "Trade Platform"],
+            "large": ["Extra Large Platform A", "Extra Large Platform B", "Extra Large Storage"],
+            "chemistry": ["Steel"]
+        }]
+    },
+    {
+        "id": 24,
+        "name": "Titanium",
+        "source": [{
+            "furnace": ["Titanite"]
+        }],
+        "builds": [{
+            "medium": ["Crane"],
+            "chemistry": ["Titanium Alloy"]
+        }]
+    },
+    {
+        "id": 25,
+        "name": "Hydrogen",
+        "source": [{
+            "condenser": ["Sylva", "Calidor", "Vesania", "Novus"]
+        }],
+        "builds": [{
+            "chemistry": ["Hydrazine"]
+        }]
+    },
+    {
+        "id": 26,
+        "name": "Argon",
+        "source": [{
+            "condenser": ["Vesania", "Glacio"]
+        }],
+        "builds": [{
+            "chemistry": ["Steel"]
+        }]
+    },
+    {
+        "id": 27,
+        "name": "Methane",
+        "source": [{
+            "condenser": ["Novus", "Atrox"]
+        }],
+        "builds": [{
+            "chemistry": ["Silicone"]
+        }]
+    },
+    {
+        "id": 28,
+        "name": "Nitrogen",
+        "source": [{
+            "condenser": ["Sylva", "Vesania", "Atrox"]
+        }],
+        "builds": [{
+            "chemistry": ["Titanium Alloy"]
+        }]
+    },
+    {
+        "id": 29,
+        "name": "Sulfur",
+        "source": [{
+            "condenser": ["Calidor", "Atrox"]
+        }],
+        "builds": [{
+            "chemistry": ["NanoCarbon Alloy"]
+        }]
+    },
+    {
+        "id": 30,
+        "name": "Rubber",
+        "source": [{
+            "chemistry": ["Organic", "Resin"]
+        }],
+        "builds": [{
+            "small": ["Winch"],
+            "large": ["Large Rover"]
+        }]
+    },
+    {
+        "id": 31,
+        "name": "Plastic",
+        "source": [{
+            "chemistry": ["Carbon", "Compound"]
+        }],
+        "builds": [{
+            "medium": ["Atmospheric Condenser", "Medium Rover"],
+            "large": ["Solar Array", "Shelter"]
+        }]
+    },
+    {
+        "id": 32,
+        "name": "Aluminum Alloy",
+        "source": [{
+            "chemistry": ["Aluminum", "Copper"]
+        }],
+        "builds": [{
+            "large": ["Large Rover", "Medium Shuttle"]
+        }]
+    },
+    {
+        "id": 33,
+        "name": "Tungsten Carbide",
+        "source": [{
+            "chemistry": ["Tungsten", "Carbon"]
+        }],
+        "builds": [{
+            "backpack": ["Drill Mod 2"],
+            "small": ["Drill Strength 1", "Drill Strength 2"],
+            "medium": ["Large Shredder"]
+        }]
+    },
+    {
+        "id": 34,
+        "name": "Graphene",
+        "source": [{
+            "chemistry": ["Graphite", "Hydrazine"]
+        }],
+        "builds": [{
+            "large": ["Solar Array"],
+            "chemistry": ["Diamond", "Titanium Alloy"]
+        }]
+    },
+    {
+        "id": 35,
+        "name": "Diamond",
+        "source": [{
+            "chemistry": ["Graphene", "Graphene"]
+        }],
+        "builds": [{
+            "backpack": ["Drill Mod 3"],
+            "small": ["Drill Strength 3"]
+        }]
+    },
+    {
+        "id": 36,
+        "name": "Hydrazine",
+        "source": [{
+            "chemistry": ["Ammonium", "Ammonium", "Hydrogen"]
+        }],
+        "builds": [{
+            "chemistry": ["Graphene"]
+        }]
+    },
+    {
+        "id": 37,
+        "name": "Silicone",
+        "source": [{
+            "chemistry": ["Resin", "Quartz", "Methane"]
+        }],
+        "builds": [{
+            "medium": ["Crane"],
+            "large": ["Shelter"]
+        }]
+    },
+    {
+        "id": 38,
+        "name": "Explosive Powder",
+        "source": [{
+            "chemistry": ["Carbon", "Carbon", "Sulfur"]
+        }],
+        "builds": [{
+            "backpack": ["Dynamite", "Fireworks"]
+        }]
+    },
+    {
+        "id": 39,
+        "name": "Steel",
+        "source": [{
+            "chemistry": ["Carbon", "Iron", "Argon"]
+        }],
+        "builds": [{
+            "medium": ["Crane"],
+            "large": ["Extra Large Storage"],
+            "chemistry": ["NanoCarbon Alloy"]
+        }]
+    },
+    {
+        "id": 40,
+        "name": "Titanium Alloy",
+        "source": [{
+            "chemistry": ["Titanium", "Graphene", "Nitrogen"]
+        }],
+        "builds": [{
+            "small": ["Drill Strength 2", "Drill Strength 3", "Hydrazine Thruster"],
+            "large": ["Large Shuttle"],
+            "chemistry": ["NanoCarbon Alloy"]
+        }]
+    },
+    {
+        "id": 41,
+        "name": "NanoCarbon Alloy",
+        "source": [{
+            "chemistry": ["Titanium Alloy", "Steel", "Helium"]
+        }],
+        "builds": [{
+            "backpack": ["Portable Oxygenator"],
+            "small": ["RTG"]
+        }]
+    }
+]
