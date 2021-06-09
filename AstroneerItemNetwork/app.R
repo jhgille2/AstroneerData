@@ -79,7 +79,7 @@ ui <- fluidPage(
                               selected = "Buggy",
                               multiple = TRUE),
                radioButtons("GraphMode",
-                            label   = "Select item dependencies or dependents",
+                            label   = "Select item precursors or dependents",
                             choices = list("Incoming" = "in", "Outgoing" = "out")),
                conditionalPanel(
                    condition = "input.GraphMode == 'out'",
