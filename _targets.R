@@ -7,31 +7,31 @@ lapply(list.files("./R", full.names = TRUE), source)
 ## tar_plan supports drake-style targets and also tar_target()
 tar_plan(
 
-  # The urls for the resource and module .json files
-  tar_target(Resource_Data,
-             Data_URLs(type = "resource"),
-             format = "file"),
-  tar_target(Module_Data,
-             Data_URLs(type = "modules"),
+  # The url resource data
+  tar_target(Resource_Data_Url,
+             "https://raw.githubusercontent.com/matco/astroneer/master/src/database.json",
              format = "url"),
 
-  ## Download these files
-  tar_target(Download_Data,
-             Get_Data(files = list(Resource_Data, Module_Data))),
+  # Download the .json file
+  tar_target(Download,
+             jsonlite::fromJSON(Resource_Data_Url)),
 
-  # Clean up the json data to tidy tibbles
-  tar_target(Clean_Data,
-             tidy_jsonData(Data = Download_Data)),
+  # Tidy up the data from the json
+  #'@TODO At some point, backpack is getting dropped from
+  #'# the produced_by column, leading to NAs. Need
+  #'# to find the cause.
+  tar_target(Munge,
+             munge_resourcedata(Download)),
 
   # Format the cleaned data as a directed network
   tar_target(ItemNetwork,
-             make_ItemNetwork(ItemData = Clean_Data)),
+             make_ItemNetwork(ItemData = Munge)),
 
   # A "global" recipe visNetwork of the full dataset
   tar_target(GlobalNetwork,
              make_GlobalNetwork(graph = ItemNetwork)),
 
-  # Export this network to a file
+  # Export the graph object to a file
   tar_target(Export_Network,
              export_ItemNetwork(network = ItemNetwork, dest = paste0(here(), "/AstroneerItemNetwork/ItemNetwork.RData")),
              format = "file"),

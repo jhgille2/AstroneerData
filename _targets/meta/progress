@@ -2,3 +2,4 @@ name|type|parent|branches|progress
 app_file|stem|app_file|0|started
 app_file|stem|app_file|0|built
 deploy|stem|deploy|0|started
+deploy|stem|deploy|0|built

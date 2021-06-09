@@ -8,29 +8,128 @@
 #
 
 library(shiny)
+library(shinyBS)
 library(igraph)
 library(visNetwork)
 library(tidyverse)
 library(tidyselect)
+library(RcppGreedySetCover)
+library(WebGestaltR)
 
 
-igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50, GraphMode = "in"){
+get_ShoppingList <- function(item, graph, mode = "in"){
+
+    # The names of all the planets
+    AllPlanets <-c("Sylva",
+                   "Desolo",
+                   "Calidor",
+                   "Vesania",
+                   "Novus",
+                   "Glacio",
+                   "Atrox")
+
+    GetLocalGraph <- function(item, graph, mode = "in"){
+        make_ego_graph(graph = graph, order = 50, nodes = item, mode = mode)[[1]]
+    }
+
+    AllLocalGraphs <- map(item, GetLocalGraph, graph, mode) %>%
+        reduce(igraph::union)
+
+    PlanetIngredients <- AllLocalGraphs %>%
+        igraph::as_data_frame() %>%
+        mutate(produced_by = coalesce(!!! syms(vars_select(names(.), starts_with("produced_by"))))) %>%
+        select(from, to, produced_by) %>%
+        dplyr::filter(from %in% AllPlanets) %>%
+        distinct()
+
+    # On how many planets can you find each of the required ingredients?
+    PlanetIngredients %<>%
+        group_by(to) %>%
+        count(name = "n_unique_planets") %>%
+        left_join(PlanetIngredients, by = "to") %>%
+        ungroup()
+
+    # Two difficulty measurements for creating an item.
+    # One is just the sum of the inverse of the number of
+    # planets each ingredient can be found on to approximate the
+    # "average" difficulty of finding the required items. The second
+    # difficulty is based on the smallest number of planets you have
+    # to visit to complete a recipe.
+
+    # "Average" difficulty
+    AvgRoute <- PlanetIngredients %>%
+        select(to, n_unique_planets) %>%
+        distinct()
+
+    AvgRoute <- sum(1/AvgRoute$n_unique_planets)
+
+    # Set coverage solver with RcppGreedySetCover
+
+    # Sorting by planets so that Sylvia always comes first in the dataframe
+    IngredientSets <- PlanetIngredients %>%
+        select(from, to) %>%
+        mutate(from = factor(from, AllPlanets)) %>%
+        arrange(from) %>%
+        mutate(from = as.character(from))
+
+    # "Weights" or planet difficulties so that the starting planet is
+    # selected first if possible
+    PlanetWeights <- list("Sylva"   = 1,
+                          "Desolo"  = 2,
+                          "Calidor" = 2,
+                          "Vesania" = 2,
+                          "Novus"   = 2,
+                          "Glacio"  = 2,
+                          "Atrox"   = 2)
+
+    # Preparing a named list of sets for the weighted set coverage
+    IDs     <- split(IngredientSets$to, IngredientSets$from)
+    Weights <- PlanetWeights[names(IDs)] %>% as.numeric()
+
+    sink("file")
+    WeightedCoverage <- weightedSetCover(IDs, costs = Weights, topN = 3)
+    sink()
+
+    WeightedRoute <- IngredientSets %>%
+        dplyr::filter(from %in% WeightedCoverage$topSets) %>%
+        arrange(from, to)
+
+    sink("file") # Preventing printing
+    OptimalRoute <- RcppGreedySetCover::greedySetCover(IngredientSets, data.table = FALSE) %>%
+        as_tibble()
+    sink()
+
+    Optimal_nPlanets <- length(unique(OptimalRoute$from))
+
+    # A tibble to hold the two scores
+    RecipeDifficultyScores <- tibble(AvgDifficulty = AvgRoute,
+                                     ShortestRoute = Optimal_nPlanets)
+
+    Results <- list(FullPlanetList = PlanetIngredients,
+                    ShortestRoute  = OptimalRoute,
+                    WeightedRoute  = WeightedRoute,
+                    Difficulty     = RecipeDifficultyScores)
+
+    return(Results)
+}
+
+
+
+igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50, GraphMode = "in", ExcludeNodes = NA){
 
 
     GetLocalGraph <- function(item, graph, mode = "in"){
         make_ego_graph(graph = graph, order = MaxDepth, nodes = item, mode = mode)[[1]]
     }
 
-    AllLocalGraphs <- map(item, GetLocalGraph, graph, GraphMode) %>%
-        reduce(igraph::union)
-
-    # LocalGraph <- make_ego_graph(graph, order = MaxDepth, item, mode = "in")
-    # LocalGraph <- LocalGraph[[1]]
+    AllLocalGraphs <- map(item, GetLocalGraph, graph, GraphMode)
+    AllLocalGraphs <- do.call(igraph::union, AllLocalGraphs)
 
     Edges <- AllLocalGraphs %>%
         igraph::as_data_frame() %>%
         mutate(produced_by = coalesce(!!! syms(vars_select(names(.), starts_with("produced_by"))))) %>%
         select(from, to, produced_by) %>%
+        dplyr::filter(!from %in% ExcludeNodes) %>%
         distinct()
 
     Nodes <- Edges %>%
@@ -38,13 +137,17 @@ igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50,
         unlist() %>%
         unique()
 
+    Nodes <- Nodes[!Nodes == "NA"]
+
     Nodes <- data.frame(id = Nodes) %>%
+        dplyr::filter(!id %in% ExcludeNodes) %>%
         mutate(label    = id,
-               Wiki_URL = paste0("https://astroneer.fandom.com/wiki/", id),
+               Wiki_URL = paste0("https://astroneer.fandom.com/wiki/",  str_replace_all(str_to_title(id), " ", "_")),
                title = paste0("<p><a href=", Wiki_URL, ">", id,"</a></p>")) %>%
         left_join(distinct(select(Edges, to, produced_by)), by = c("id" = "to")) %>%
-        rename(group = produced_by) %>%
-        mutate(group = replace_na(group, "planet"))
+        rename(group = produced_by)
+
+    Edges <- Edges[Edges$from != "NA", ]
 
     p <- visNetwork(Nodes, Edges) %>%
         visEdges(arrows = "to") %>%
@@ -52,7 +155,16 @@ igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50,
                               sortMethod = "directed",
                               levelSeparation = 150,
                               edgeMinimization = TRUE) %>%
-        visGroups() %>%
+        visGroups(groupname = "Planet", color            = "#bf812d") %>%
+        visGroups(groupname = "Gas", color               = "#c7eae5") %>%
+        visGroups(groupname = "Mined", color             = "gray") %>%
+        visGroups(groupname = "Backpack", color          = "#dfc27d") %>%
+        visGroups(groupname = "Small printer", color     = "#f6e8c3") %>%
+        visGroups(groupname = "Chemistry lab", color     = "#ffffbf") %>%
+        visGroups(groupname = "Small printer", color     = "#fee090") %>%
+        visGroups(groupname = "Medium printer", color    = "#80cdc1") %>%
+        visGroups(groupname = "Large printer", color     = "#35978f") %>%
+        visGroups(groupname = "Smelting furnace", color  = "#8c510a") %>%
         visLegend()
 
     return(p)
@@ -64,6 +176,15 @@ AllVertices <- V(network) %>%
     names() %>%
     sort()
 
+# The names of all the planets
+PlanetNames <-c("Sylva",
+                "Desolo",
+                "Calidor",
+                "Vesania",
+                "Novus",
+                "Glacio",
+                "Atrox")
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -72,23 +193,17 @@ ui <- fluidPage(
 
 
     fluidRow(
-        column(2,
+        sidebarPanel(width = 2,
                selectizeInput("RecipeSelection",
                               label    = "Item",
                               choices  = NULL,
                               selected = "Buggy",
                               multiple = TRUE),
-               radioButtons("GraphMode",
-                            label   = "Select item precursors or dependents",
-                            choices = list("Incoming" = "in", "Outgoing" = "out")),
-               conditionalPanel(
-                   condition = "input.GraphMode == 'out'",
-                   sliderInput("GraphDepth",
-                               label = "Maximum Depth",
-                               min = 1,
-                               max = 5,
-                               value = 1)
-               )),
+               checkboxInput("GraphOptimize",
+                            label = "Optimize Route",
+                            value = FALSE),
+               bsTooltip("GraphOptimize", "Filter the graph to the smallest number of planets you can visit and stil gather the raw resources you'll need to make the chosen items.",
+                         "right", options = list(container = "body"))),
 
         column(10,
                visNetworkOutput("network", height = "700px"))
@@ -105,11 +220,23 @@ server <- function(input, output, session) {
                          server = TRUE,
                          selected = "Buggy")
 
+    ExcludePlanets <- reactive({
+
+        if(!input$GraphOptimize){
+            return("blahblahblah")
+        }
+
+        IncludePlanets <- get_ShoppingList(input$RecipeSelection, network)$ShortestRoute$from %>% as.character() %>%unique()
+        PlanetNames[!(PlanetNames %in% IncludePlanets)]
+
+    })
+
     NetworkData <- reactive({
-        igraph_to_VisNetwork(graph     = network,
-                             item      = as.character(input$RecipeSelection),
-                             MaxDepth  = ifelse(input$GraphMode == "in", 50, input$GraphDepth),
-                             GraphMode = as.character(input$GraphMode))
+        igraph_to_VisNetwork(graph        = network,
+                             item         = as.character(input$RecipeSelection),
+                             MaxDepth     = 50,
+                             GraphMode    = "in",
+                             ExcludeNodes = ExcludePlanets())
     })
 
     output$network <- renderVisNetwork({
@@ -117,6 +244,10 @@ server <- function(input, output, session) {
         NetworkData()
 
     })
+#
+    addTooltip(session = session,
+               id = "GraphOptimize",
+               title = "Filter the graph to the smallest number of planets you can visit and stil gather the raw resources you'll need to make the chosen items.")
 
 }
 
