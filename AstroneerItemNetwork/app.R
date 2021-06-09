@@ -11,18 +11,27 @@ library(shiny)
 library(igraph)
 library(visNetwork)
 library(tidyverse)
+library(tidyselect)
 
 
-igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50){
+igraph_to_VisNetwork <- function(graph = network, item = "Buggy", MaxDepth = 50, GraphMode = "in"){
 
-    LocalGraph <- make_ego_graph(graph, order = MaxDepth, item, mode = "in")
-    LocalGraph <- LocalGraph[[1]]
 
-    Edges <- LocalGraph %>%
+    GetLocalGraph <- function(item, graph, mode = "in"){
+        make_ego_graph(graph = graph, order = MaxDepth, nodes = item, mode = mode)[[1]]
+    }
+
+    AllLocalGraphs <- map(item, GetLocalGraph, graph, GraphMode) %>%
+        reduce(igraph::union)
+
+    # LocalGraph <- make_ego_graph(graph, order = MaxDepth, item, mode = "in")
+    # LocalGraph <- LocalGraph[[1]]
+
+    Edges <- AllLocalGraphs %>%
         igraph::as_data_frame() %>%
+        mutate(produced_by = coalesce(!!! syms(vars_select(names(.), starts_with("produced_by"))))) %>%
         select(from, to, produced_by) %>%
         distinct()
-
 
     Nodes <- Edges %>%
         select(from, to) %>%
@@ -68,7 +77,18 @@ ui <- fluidPage(
                               label    = "Item",
                               choices  = NULL,
                               selected = "Buggy",
-                              multiple = FALSE)),
+                              multiple = TRUE),
+               radioButtons("GraphMode",
+                            label   = "Select item dependencies or dependents",
+                            choices = list("Incoming" = "in", "Outgoing" = "out")),
+               conditionalPanel(
+                   condition = "input.GraphMode == 'out'",
+                   sliderInput("GraphDepth",
+                               label = "Maximum Depth",
+                               min = 1,
+                               max = 5,
+                               value = 1)
+               )),
 
         column(10,
                visNetworkOutput("network", height = "700px"))
@@ -86,9 +106,10 @@ server <- function(input, output, session) {
                          selected = "Buggy")
 
     NetworkData <- reactive({
-        igraph_to_VisNetwork(graph = network,
-                             item = input$RecipeSelection,
-                             MaxDepth = 50)
+        igraph_to_VisNetwork(graph     = network,
+                             item      = as.character(input$RecipeSelection),
+                             MaxDepth  = ifelse(input$GraphMode == "in", 50, input$GraphDepth),
+                             GraphMode = as.character(input$GraphMode))
     })
 
     output$network <- renderVisNetwork({
