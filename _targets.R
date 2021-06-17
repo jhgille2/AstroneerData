@@ -17,9 +17,6 @@ tar_plan(
              jsonlite::fromJSON(Resource_Data_Url)),
 
   # Tidy up the data from the json
-  #'@TODO At some point, backpack is getting dropped from
-  #'# the produced_by column, leading to NAs. Need
-  #'# to find the cause.
   tar_target(Munge,
              munge_resourcedata(Download)),
 

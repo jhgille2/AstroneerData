@@ -197,7 +197,7 @@ ui <- fluidPage(
                selectizeInput("RecipeSelection",
                               label    = "Item",
                               choices  = NULL,
-                              selected = "Buggy",
+                              selected = "Auto extractor",
                               multiple = TRUE),
                checkboxInput("GraphOptimize",
                             label = "Optimize Route",
@@ -218,7 +218,7 @@ server <- function(input, output, session) {
                          "RecipeSelection",
                          choices = AllVertices,
                          server = TRUE,
-                         selected = "Buggy")
+                         selected = "Auto extractor")
 
     ExcludePlanets <- reactive({
 

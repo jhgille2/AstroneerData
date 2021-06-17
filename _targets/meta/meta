@@ -17,16 +17,16 @@ Data_URLs|function|c7c157d9a67c6746||||||||||||||
 make_ItemNetwork|function|f99d3b4c5ddde921||||||||||||||
 get_resource_data|function|76473874ef6ff549||||||||||||||
 munge_resourcedata|function|e949bc1dabe8f2d3||||||||||||||
-.Random.seed|object|b40c9cc816773c5c||||||||||||||
+.Random.seed|object|4eaabea5238c195e||||||||||||||
 deploy_app|function|d29dcb0e2a166c0c||||||||||||||
 tidy_jsonData|function|282c2d41ff412e6d||||||||||||||
 export_ItemNetwork|function|f5263f78261e88b3||||||||||||||
 make_GlobalNetwork|function|1fe9efdf5c4d20e0||||||||||||||
 get_RequiredPlanets|function|0093c4421a3d93c1||||||||||||||
-app_file|stem|a6951c9fcdf436bf|d2981f1c6eab8ce5|af4986d355838f9b|-562472046|C:/Users/Jay/Desktop/Documents/R/AstroneerData/AstroneerItemNetwork/app.R|t18787.9319649165s|7a393858d19c9d8f|9020|file|vector|||0||
+app_file|stem|a22e4cdcc27aff97|d2981f1c6eab8ce5|af4986d355838f9b|-562472046|C:/Users/Jay/Desktop/Documents/R/AstroneerData/AstroneerItemNetwork/app.R|t18788.0997123569s|35cd21eddf21d404|9038|file|vector|||0||
 Download|stem|65e3cf939cda1b66|30dee8faba661604|d6a69658be9a3ad5|-333156073||t18787.8595118089s|e775dbe64616a426|5171|rds|vector|||0.22||
 Munge|stem|26996822a25442f5|544b2a27f6cd1715|a14bb717e38c87d8|-579501038||t18787.9219862925s|a369131124a1ddf1|2175|rds|vector|||0.14||
 ItemNetwork|stem|0758d1301fecdd53|f88d52bf5b5d710d|377aedae633a5c41|-1557185638||t18787.9219866847s|3ced2d5379519dd5|4062|rds|vector|||0.02|In d NA elements were replaced with string NA|
 Export_Network|stem|c6a9404ab4643ff2|bf56b8aae81e5812|272220f16bd195ac|1314786524|C:/Users/Jay/Desktop/Documents/R/AstroneerData/AstroneerItemNetwork/ItemNetwork.RData|t18787.9219869158s|bf26de4361888df8|4078|file|vector|||0||
 GlobalNetwork|stem|fb79fb4a131259c4|f0eadbdc1e43afb9|15a62587d7dba83a|1440611359||t18787.921987585s|fab6ecdc84daebd4|5912|rds|vector|||0.03||
-deploy|stem|e082e149348ab808|85d63e27c043b3f0|23ed6fa7de18a39c|-920649119||t18787.9341326531s|97452b5a3d70b0b8|49|rds|vector|||126.61||
+deploy|stem|e082e149348ab808|85d63e27c043b3f0|ade09ccf9a1f0f03|-920649119||t18788.1014907388s|97452b5a3d70b0b8|49|rds|vector|||128.97||
