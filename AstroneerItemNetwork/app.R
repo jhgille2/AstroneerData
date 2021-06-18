@@ -28,13 +28,21 @@ get_ShoppingList <- function(item, graph, mode = "in"){
                    "Glacio",
                    "Atrox")
 
+    # A function to get the local graph that leads to a given item. Essentially,
+    # this is pulling the crafting recipe for this item. The diameter of the full graph is
+    # 5 so orders larger than this (should) return the full crafting recipe.
     GetLocalGraph <- function(item, graph, mode = "in"){
         make_ego_graph(graph = graph, order = 50, nodes = item, mode = mode)[[1]]
     }
 
-    AllLocalGraphs <- map(item, GetLocalGraph, graph, mode) %>%
-        reduce(igraph::union)
+    # Get the crafting recipe for each item in the user-supplied vector, and
+    # return the union of these graphs
+    AllLocalGraphs <- map(item, GetLocalGraph, graph, mode)
+    AllLocalGraphs <- do.call(igraph::union, AllLocalGraphs) # purrr::reduce may be dropping vertex attributes
+                                                             # still not sure about the exact cause of the bug
+                                                             # but switching to do.call(...) seemed to help
 
+    # What ingredients are produced directly from the planets
     PlanetIngredients <- AllLocalGraphs %>%
         igraph::as_data_frame() %>%
         mutate(produced_by = coalesce(!!! syms(vars_select(names(.), starts_with("produced_by"))))) %>%
@@ -65,7 +73,10 @@ get_ShoppingList <- function(item, graph, mode = "in"){
 
     # Set coverage solver with RcppGreedySetCover
 
-    # Sorting by planets so that Sylvia always comes first in the dataframe
+    # Sorting by planets so that Sylva always comes first in the dataframe.
+    # This is important as if available, it will be selected by the greedy set
+    # coverage function when deciding what planets to include which makes sense as
+    # it's probably easiest to reach the starting planet.
     IngredientSets <- PlanetIngredients %>%
         select(from, to) %>%
         mutate(from = factor(from, AllPlanets)) %>%
@@ -90,21 +101,27 @@ get_ShoppingList <- function(item, graph, mode = "in"){
     WeightedCoverage <- weightedSetCover(IDs, costs = Weights, topN = 3)
     sink()
 
+    # weightedSetCover prints to the console when it runs but I don't want it to
+    # invisible(capture.output(WeightedCoverage <- weightedSetCover(IDs, costs = Weights, topN = 3)))
+
+    # Filter the full ingredient set to just those in the top set
     WeightedRoute <- IngredientSets %>%
         dplyr::filter(from %in% WeightedCoverage$topSets) %>%
         arrange(from, to)
 
-    sink("file") # Preventing printing
+    sink("file") # Preventing printing, use greedySetCover for unweighted set coverage.
     OptimalRoute <- RcppGreedySetCover::greedySetCover(IngredientSets, data.table = FALSE) %>%
         as_tibble()
     sink()
 
+    # The number of planets you must visit in the optimal route
     Optimal_nPlanets <- length(unique(OptimalRoute$from))
 
     # A tibble to hold the two scores
     RecipeDifficultyScores <- tibble(AvgDifficulty = AvgRoute,
                                      ShortestRoute = Optimal_nPlanets)
 
+    # Combine all the results into a list
     Results <- list(FullPlanetList = PlanetIngredients,
                     ShortestRoute  = OptimalRoute,
                     WeightedRoute  = WeightedRoute,
